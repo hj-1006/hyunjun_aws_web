@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyunjun's Web</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="container">
+        <div class="card">
+            <div class="avatar">HJ</div>
+            <h1>안녕하세요!<br><span class="highlight">현준</span>입니다!</h1>
+            <p class="subtitle">간단한 카운터 데모 페이지입니다</p>
+
+            <div class="counter-box">
+                <span class="counter-label">클릭 횟수</span>
+                <p id="count" class="counter-value">0</p>
+            </div>
+
+            <button id="button" class="btn-primary">
+                <span class="btn-icon">+</span>
+                버튼 클릭
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const button = document.getElementById('button');
+        const count = document.getElementById('count');
+
+        addEventListener('DOMContentLoaded', async () => {
+            await fetch('/api/getCount', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('count').textContent = data.count;
+            });
+        });
+
+        button.addEventListener('click', async () => {
+            button.classList.add('clicked');
+            setTimeout(() => button.classList.remove('clicked'), 200);
+
+            await fetch('/api/putCount', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ count: count.textContent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const el = document.getElementById('count');
+                el.textContent = data.count;
+                el.classList.add('bump');
+                setTimeout(() => el.classList.remove('bump'), 300);
+            });
+        });
+    </script>
+</body>
+</html>
